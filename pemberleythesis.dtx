@@ -1,0 +1,62 @@
+\documentclass{ltxdoc}
+\usepackage[english,ngerman]{babel}
+\usepackage{pemberley}
+\usepackage[supervisor=myself,thesistype={(Not A) Bachelor's Thesis},author={Adrian Rettich},title={The PemberleyThesis Package},department={Department of Mathematics}]{pemberleythesis}
+
+\email{adrian.rettich@gmail.com}
+\begin{document}
+
+\pemberleytitle
+\section{Synopsis}
+  This package is designed to typeset theses (e.g.\ a Bachelor's or Master's thesis) at the TUK. I suggest using this with the \textbf{amsbook} class, but it works just as well with other document classes.
+  
+  \section{Loaded Packages}
+  PemberleyThesis automatically loads \textbf{pemberley}, \textbf{tabularx}, and \textbf{graphicx}.
+  
+  \section{Formatting}
+
+  PemberleyThesis changes nothing about the default formatting. It provides you with the option for a TUK title page (cf.\ section \ref{secTitle}), but does not override the default \textbackslash maketitle so you can choose which you like better.
+
+  \section{Macros}\label{secMacros}
+
+  PemberleyThesis provides the following macros.
+
+  \begin{description}
+	  \item[\textbackslash pemberleytitle] Produces a title page as described in section \ref{secTitle}.
+	  \item[\textbackslash pemberleydeclaration] Inserts the ``Eigenständigkeitserklärung'' (formal declaration) required by the Prüfungsordnung. This uses as your name the author set by \textbackslash author or via the \emph{author} package option. The declaration is in English or German, depending on the current document language (consult the base \textbf{pemberley} documentation for how to set your language, or simply use \textbf{babel}). I would preface the declaration with a \textbackslash clearpage, but you are not required to do so. You can see the effect of the command at the very end of this documentation, once after a \textbackslash setlanguage\{english\} and once after a \textbackslash setlanguage\{ngerman\}.
+	  \item[\textbackslash supervisor, \textbackslash department, \textbackslash supervisorstring, \textbackslash thesistype] Using one of these has the same effect as passing its argument to the package option of the same name: \textbackslash supervisor\{Marie Curie\} will change your supervisor's name to \emph{Marie Curie}. For more on these options refer to section \ref{secOptions}.
+  \end{description}
+
+  \section{Title Page}\label{secTitle}
+
+  The command \textbackslash pemberleytitle inserts a title page with the TUK logo, optionally your department, and some other information. All of these values can be passed as options when loading the package, see section \ref{secOptions}.
+
+  The author and title information can also be set via the standard commands (\textbackslash author and \textbackslash title), and PemberleyThesis supplements this by introducing the commands \textbackslash supervisor, \textbackslash department, \textbackslash supervisorstring, and \textbackslash thesistype.
+
+  Note that the title page for this documentation is slightly off-center. This depends on the document class and will not happen in, for instance, an \textbf{amsbook}.
+
+  \section{Options}\label{secOptions}
+
+  PemberleyThesis accepts the same options as the base Pemberley package, as well as the following. \textbf{Attention:} if your option contains a space, it must be enclosed in braces, as in \emph{author=\{Adrian Rettich\}}.
+
+  Note that all of these are also available as commands, cf.\ section \ref{secMacros}.
+
+  \begin{description}
+	\item[author] Your name.
+	\item[title] The title of your work.
+	\item[date] The date. Note that the \emph{author}, \emph{title}, and \emph{date} options are simply another way to access the author, title, and date values you know from your usual \textbackslash maketitle.
+	\item[supervisor] Your supervisor's name.
+	\item[supervisorstring] If you want to display something other than ``Supervisor:'' in front of your supervisor's name, pass it to this option. If you want no supervisor displayed, pass the option without a value.
+	\item[department] Your department.
+	\item[thesistype] The kind of thesis you are writing, e.g.\ ``Bachelor's Thesis''. This is displayed at the top of the title page.
+  \end{description}
+\section{License}
+\coffeeware
+
+  \clearpage
+  \selectlanguage{ngerman}
+  \pemberleydeclaration
+  \clearpage
+  \selectlanguage{english}
+  \pemberleydeclaration
+\end{document}

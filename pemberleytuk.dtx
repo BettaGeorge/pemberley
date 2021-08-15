@@ -1,0 +1,226 @@
+\documentclass{ltxdoc}
+\usepackage[dept=MA]{pemberleytuk}
+\title{The PemberleyTUK Package}
+\author{Adrian Rettich}
+\email{adrian.rettich@gmail.com}
+\begin{document}
+\maketitle
+
+\section{Synopsis}
+  This package is meant to help you create documents that follow the TUK corporate design guidelines (https://www.uni-kl.de/pr-marketing/marketing/corporate-design-und-vorlagen/). To make it even easier, you can use the \textbf{tukposter} class (which uses PemberleyTUK internally).
+
+  \tableofcontents
+
+  \section{Loaded Packages}
+  PemberleyTUK uses \textbf{pemberley}. The boxes are drawn using \textbf{tikz} with the \textbf{shapes} library.
+
+  It also needs \textbf{xcolor}, so using the pemberley option \emph{nocolor} in conjunction with this has no effect.
+
+  Since the TUK corporate design requires the PTSans font, PemberleyTUK also loads the \textbf{paratype} package. If you have no intention of using the official font, you can disable this behavior by passing the \emph{reallynopt} option (cf.\ section \ref{secOptions}). If you are just not sure how to install the fonts, please refer to the guide in section \ref{secInstall}.
+
+
+  \section{Colors}
+
+  PemberleyTUK defines all colors specified in the corporate design handbook. These are as follows:
+
+  \begin{description}
+  \item[tukblue, tukred] The primary TUK colors.
+  \item[tukwarm, tukcold] The secondary TUK colors.
+  \item[tukblack] For the sake of completeness, I have included this.
+  \item[tuklogobg] The color used as background for the logo.
+  \item[tukdeptbg] The color used as background for a department header.
+  \item[tukotherbg] For a header of something which is not a department.
+  \item[tuklighttext, tukdarktext] Color for text on dark resp.\ light ground.
+  \item[tukArchitektur,tukMA,tukCH,tukPH,tukBio,tukEIT,tukMV,]\item[tukInformatik,tukWiWi,tukSoWi,tukRU,tukBauIng]\vspace{-2ex} The department decoration colors.
+  \end{description}
+
+  The definitions of these change to grayscale variants automatically if you compile your document with the \emph{grayscale} option (cf.\ section \ref{secOptions}).
+
+  Please refer to the design handbook for when to use which color.
+
+  \section{Fonts}
+
+  By default, PemberleyTUK switches your document to the PTSans font family. In order for this to work, you will need to install the font on your system (cf.\ section \ref{secInstall}). If you do not have the font installed, your document will compile, but \LaTeX{} will substitute some other font. Look for a warning like ``Font shape (something) undefined'' in your log.
+
+  Since PemberleyTUK loads the entire \textbf{paratype} package, you get access to multiple font families, which you load via \textbackslash fontfamily\{\emph{fontname}\}\textbackslash selectfont.
+
+  \begin{itemize}
+      \item {\fontfamily{PTSans-TLF}\selectfont The \textbf{PTSans-TLF} family is used throughout this document.}
+      \item {\fontfamily{PTSansNarrow-TLF}\selectfont The \textbf{PTSansNarrow-TLF} family is well-suited for headers or titles.}
+      \item {\fontfamily{PTSansCaption-TLF}\selectfont The \textbf{PTSansCaption-TLF} family has larger lowercase letters.}
+      \item {\fontfamily{PTSerif-TLF}\selectfont The \textbf{PTSerif-TLF} family is a serifed version of PTSans.}
+      \item {\fontfamily{PTSerifCaption-TLF}\selectfont The \textbf{PTSerifCaption-TLF} family has no bold version for some reason.}
+      \item {\fontfamily{PTMono-TLF}\selectfont The \textbf{PTMono-TLF} family is monospaced.}
+  \end{itemize}
+
+  Please refer to the \textbf{paratype} documentation for further details.
+
+  If you would like to keep the default font unchanged, but still have access to PT fonts, load PemberleyTUK with the \emph{nopt} option.
+
+  \section{Macros}\label{secMacros}
+
+  PemberleyTUK provides the following additional macros.
+
+  \begin{description}
+      \item[\textbackslash switchtocolor, \textbackslash switchtograyscale] Switch from color to grayscale layout and back on the fly\footnote{Note: if you are planning to print your document in grayscale, then compiling in grayscale yields a better print result than simply printing the colored document on a grayscale printer.}.
+	  \item[\textbackslash switchdept\{dept\}] Switch your department on the fly. The possible values are MA, Architektur, PH, CH, Bio, RU, BauIng, Informatik, WiWi, SoWi, EIT, MV.
+	  \item[\textbackslash thedept] Inserts the name of your department.
+	  \item[\textbackslash theDept] Inserts the name of your department in ALL CAPS.
+  \end{description}
+
+  \newpage
+  Finally, PemberleyTUK lets you create boxes for logos in the corporate design. The first three of these cover specific instances you will probably need often, while the final macro lets you fiddle with the box to your heart's content.
+
+  \subsection{\textbackslash tuklogobox\{\emph{placement}\}}
+  Creates a box with the TUK logo (there is a \textbackslash switchtograyscale between the two examples):
+
+  \tuklogobox{a}
+  \switchtograyscale
+  \tuklogobox{a}
+  \switchtocolor
+
+  The mandatory argument is the intended \emph{placement} of the box: t (top of the page), b (bottom of the page), or a (anywhere on the page). Passing this does \emph{not} change where the box is placed, it only affects the protected space around it: top means there is protected space only underneath the box, bottom means only above, and anywhere means there is protection on all sides, as per the design handbook.
+
+  All spacing (inner and outer) is calculated according to the design handbook.
+
+  \newpage
+  \subsection{\textbackslash tukdeptbox}
+  Places a box with your department, to be used at the top of your page. Hence you cannot pass a placement parameter.
+
+  \tukdeptbox
+
+  \subsection{\textbackslash tukheaderbox\{\emph{text}\}[\emph{more text}]}
+  If your document is not from the department, but e.g.\ the student council, use this header instead. It allows for one line of text (the mandatory argument) and an optional second line of text. Note that there are no automatic line breaks.
+
+  \tukheaderbox{AStA}
+
+  \tukheaderbox{FACHSCHAFTSRAT}[MATHEMATIK]
+
+  Note that as per the design handbook, this box is a lighter shade of blue than the \textbackslash tukdeptbox.
+
+  \newpage
+  \subsection{\textbackslash tukbox}
+
+  This comes in two flavors: with three mandatory arguments (placement, fill color, filename), it inserts a graphic into your box. 
+  
+  For example, \textbackslash tukbox\{a\}\{tukred\}\{tuklogograyscale.pdf\} produces the following:
+  \tukbox{a}{tukred}{tuklogograyscale.pdf}
+
+  If called with an optional third argument (the text color), it inserts text instead---the following is the output of \textbackslash tukbox\{a\}\{tukblue\}[white]\{MY BOX\}:
+  \tukbox{a}{tukblue}[white]{MY BOX}
+
+  You can add a second line of text as another optional argument. 
+  
+  \textbackslash tukbox\{a\}\{tukblue\}[white]\{MY BOX\}[HAS MUCH TEXT]
+  produces:
+  \tukbox{a}{tukblue}[white]{MY BOX}[HAS MUCH TEXT]
+
+  \newpage
+  \subsection{\textbackslash tukbox*}
+  These macros take the same arguments as the unstarred versions, but produce a \emph{floating} box, i.e.\ one that is overlaid by the text. If invoked with the \emph{a} placement, this means you will have to position the box yourself (e.g.\ by use of a figure environment). If invoked with the \emph{t}, \emph{b}, \emph{l}, or \emph{r} placement, the box will be flush with the top, bottom, left, resp.\ right border of the page (possibly with an additional print margin, but only if \textbackslash tukboxprintmargin is set, cf.\ the next section).
+
+  \textbf{Important: if you use a floating box, you need to compile your document twice. If the margins are wrong, try deleting your .aux file.}
+    \tuklogobox*{b}
+    \tuklogobox*{l}
+    \tukdeptbox*
+
+  The examples on this page were produced as follows:
+\vspace{\baselineskip}
+
+    \textbackslash tukdeptbox*
+
+    \textbackslash tuklogobox*\{b\}
+
+    \textbackslash tuklogobox*\{l\}
+
+
+\vspace{\baselineskip}
+Note how these are placed under the text and also do not force any outer separation:
+\vspace{\baselineskip}
+
+\coffeeware
+
+  \newpage
+
+  \section{Additional Settings for TUKboxes}
+
+  You have additional control over the boxes produced by the various commands by using the following lengths (set via \textbackslash setlength as usual).
+
+  \begin{description}
+      \item[tukboxlineskip] Vertical space between the first and second line of text in a two-line box. Defaults to 3pt.
+      \item[tukboxprintmargin] Additional space to leave between the physical page margin and the box, so that the box is not flush with the page margin.
+      \item[tukboxframewidth] Width of the frame around the colored box. Only works if \textbackslash tukboxframe is set (see below).
+      \item[tukboxdebugframewidth] Width of the debug frame (see below).
+  \end{description}
+
+  In addition, especially for debugging purposes, you might want to add a frame around the box. This is achieved by setting the following variables (via \textbackslash def) to a color (both default to \emph{none}, which shows no frame):
+
+  \begin{description}
+      \item[tukboxframe] A frame around the colored box.
+      \item[tukboxdebugframe] A frame indicating the outer separation.
+  \end{description}
+
+  The command sequence
+
+  \textbackslash setlength\textbackslash tukboxframewidth\{2pt\}
+
+  \textbackslash setlength\textbackslash tukboxdebugframewidth\{2pt\}
+
+  \textbackslash def\textbackslash tukboxframe\{black\}
+
+  \textbackslash def\textbackslash tukboxdebugframe\{red\}
+
+  \textbackslash tukdeptbox
+
+  results in the following box:
+  \setlength\tukboxframewidth{2pt}
+  \setlength\tukboxdebugframewidth{2pt}
+  \def\tukboxframe{black}
+  \def\tukboxdebugframe{red}
+  \tukdeptbox
+
+  \section{Options}\label{secOptions}
+
+  \textbf{Pemberleytuk} accepts the same options as the base Pemberley package, as well as the following:
+
+  \begin{description}
+
+	  \item[dept=\emph{dept}] Your department. Does exactly the same as calling the \textbackslash switchdept macro (section \ref{secMacros}).
+	  \item[grayscale] Set document in grayscale. You can switch back to color by calling the \textbackslash switchtocolor macro.
+      \item[nopt] Leave the default font unchanged. You can still load PTSans and friends like \textbackslash fontfamily\{PTSans\}\textbackslash selectfont.
+      \item[reallynopt] Leave the default font unchanged, and do not even load the \textbf{paratype} package. You will not have access to PTSans.
+
+		 \end{description}
+
+
+\section{Installing the Fonts}\label{secInstall}
+
+To use the PTSans font family (and related fonts), you may first have to install it on your system. The files provided on the official TUK website are \emph{not} sufficient for this. Please download the file \emph{pt-type1.zip} provided on the Fachschaftsrat website containing some files with the extension \textbf{.pfb}. Unpack them somewhere.
+
+\subsection{Linux}
+
+To make the fonts available system-wide, copy the files into the directory /usr/share/fonts/type1/ by opening a terminal in the folder where you extracted the files and running
+
+\textbf{sudo cp ./*.pfb /usr/share/fonts/type1/}.
+
+You then have to update your font maps by running
+
+\textbf{sudo fc-cache -fv}.
+
+If you do not want to make the fonts available for everyone (or if you do not have root access), then copy the files into the folder .local/share/fonts/type1/ in your home directory (create it if necessary), then run
+
+\textbf{fc-cache -fv}.
+
+
+\subsection{MacOS}
+
+I would wager that the commands described under \emph{Linux} work here, but I do not have access to a system where I could test this. If someone does, please contact me so I can update this documentation.
+
+\subsection{Windows}
+
+If anyone knows what dark magic is needed to make this work on Windows(tm), please shoot me an email.
+\section{License}
+\coffeeware
+
+
+\end{document}

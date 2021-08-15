@@ -1,0 +1,299 @@
+\ProvidesPackage{pemberley}[2020/01/29 Adrian's Pemberley Essentials]
+
+% Enable utf8 support unless already implemented natively
+\newif\ifnounicode
+
+\ifx\luatexversion\undefined
+    \ifx\XeTeXversion\undefined
+        \nounicodetrue
+    \fi
+\fi
+
+\ifnounicode
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage[T1]{fontenc}
+\fi
+
+\RequirePackage{pgfopts}
+\RequirePackage{iflang}
+\RequirePackage{ifthen}
+\RequirePackage{xparse} % is awesome, provides NewDocumentCommand
+%\RequirePackage{microtype} % Improved typography, removes some overfull \hboxes.
+
+% OPTIONS
+\def\@pemberleylang{english}
+\def\@pemberleyparindent{0pt}
+\newif\if@pemberleyfootnotereset
+\newif\if@pemberleyparacol
+\newif\if@pemberleynohyper
+\newif\if@pemberleynocolor
+
+\newif\if@pemberleynobook
+\newif\if@pemberleybook
+\newif\if@pemberleyfixindent
+\newif\if@pemberleynofixindent
+\newif\if@pemberleyfixmath
+\newif\if@pemberleynofixmath
+\newif\if@pemberleyalphenumi
+\newif\if@pemberleynoalphenumi
+\newif\if@pemberleyparens
+\newif\if@pemberleynoparens
+
+\newif\if@pemberleydisableeverything
+
+
+
+
+% AND NOW THE KEYS
+\pgfkeys{
+    /pemberley/.cd,
+    lang/.store in=\@pemberleylang,
+    parindent/.store in=\@pemberleyparindent,
+    footnotereset/.is if=@pemberleyfootnotereset,
+    paracol/.is if=@pemberleyparacol,
+    nohyper/.is if=@pemberleynohyper,
+    nocolor/.is if=@pemberleynocolor,
+    nocosmetics/.is if=@pemberleydisableeverything,
+    nofixbook/.is if=@pemberleynobook,
+    fixbook/.is if=@pemberleybook,
+    nofixindent/.is if=@pemberleynofixindent,
+    fixindent/.is if=@pemberleyfixindent,
+    nofixinline/.is if=@pemberleynofixmath,
+    fixinline/.is if=@pemberleyfixmath,
+    alphenumi/.is if=@pemberleyalphenumi,
+    noalphenumi/.is if=@pemberleynoalphenumi,
+    parens/.is if=@pemberleyparens,
+    noparens/.is if=@pemberleynoparens,
+}
+
+\ProcessPgfPackageOptions{/pemberley}
+\relax
+
+% TODO: automatically build the following macros
+
+\if@pemberleybook
+	\@pemberleydisableeverythingtrue
+	\if@pemberleynobook
+		\PackageError{pemberley}{Options fixbook and nofixbook are mutually exclusive}{}
+	\fi
+\fi
+\if@pemberleyfixindent
+\@pemberleydisableeverythingtrue
+	\if@pemberleynofixindent
+		\PackageError{pemberley}{Options fixindent and nofixindent are mutually exclusive}{}
+	\fi
+\fi
+\if@pemberleyfixmath
+\@pemberleydisableeverythingtrue
+	\if@pemberleynofixmath
+		\PackageError{pemberley}{Options fixmath and nofixmath are mutually exclusive}{}
+	\fi
+\fi
+\if@pemberleyalphenumi
+\@pemberleydisableeverythingtrue
+	\if@pemberleynoalphenumi
+		\PackageError{pemberley}{Options alphenumi and noalphenumi are mutually exclusive}{}
+	\fi
+\fi
+\if@pemberleyparens
+\@pemberleydisableeverythingtrue
+	\if@pemberleynoparens
+		\PackageError{pemberley}{Options parens and noparens are mutually exclusive}{}
+	\fi
+\fi
+
+\if@pemberleydisableeverything
+    \if@pemberleynobooktrue
+    \if@pemberleynofixindenttrue
+    \if@pemberleynofixmathtrue
+    \if@pemberleynoalphenumitrue
+    \if@pemberleynoparenstrue
+\fi
+
+\if@pemberleybook
+\@pemberleynobookfalse
+\fi
+\if@pemberleyfixindent
+\@pemberleynofixindentfalse
+\fi
+\if@pemberleyfixmath
+\@pemberleynofixmathfalse
+\fi
+\if@pemberleyalphenumi
+\@pemberleynoalphenumifalse
+\fi
+\if@pemberleyparens
+\@pemberleynoparensfalse
+\fi
+
+
+\if@pemberleynocolor\else
+	\PassOptionsToPackage{dvipsnames}{xcolor}
+	\RequirePackage{xcolor}
+\fi
+
+\if@pemberleynohyper\else
+\RequirePackage{hyperref} % Add links and bookmarks to PDF.
+\AtBeginDocument{\hypersetup{pdfauthor=\theauthor, pdftitle=\thetitle}}
+\fi
+
+\if@pemberleyfootnotereset
+  \RequirePackage{perpage}
+  \MakePerPage{footnote}
+\fi
+
+\if@pemberleyparacol
+  \RequirePackage{paracol}
+  \footnotelayout{m}
+\fi
+
+\newif\if@babel
+\@ifpackageloaded{babel}{\@babeltrue}{\@babelfalse}
+% check again at beginning of document in case babel was loaded after pemberley:
+\AtBeginDocument{
+    \@ifpackageloaded{babel}{\@babeltrue}{\@babelfalse}
+}
+
+% LOCALIZATION
+
+% execute #1 if lang is ngerman, #2 otherwise
+\newcommand\@ifgerman[2]{
+    \if@babel
+        \IfLanguageName{ngerman}{#1}{#2}
+    \else
+        \ifthenelse{\equal{\@pemberleylang}{ngerman}}{#1}{#2}
+    \fi
+}
+
+\let\IfGermanTF\@ifgerman
+\relax
+
+% problem: \@ifgerman is not expandable, but we need it to be in order to be able to change the language on the fly.
+% example: \uppercase\expandafter\@ifgerman{katze}{cat} does not work.
+% solution: the following command allows to pass something which needs an expandable token list as an optional argument, which is then inserted after the if statements are done.
+% example: \@pemberleylocale{katze}{cat}[\uppercase] resolves to KATZE in German and to CAT in English.
+% the optional argument, even though it is prepended within the command, comes last to allow fallthrough (see the implementation of \theDept in pemberleytuk).
+\NewDocumentCommand\@pemberleylocale{mmO{}}{\@ifgerman{#3{#1}}{#3{#2}}}
+
+
+% FORMATTING
+
+% don't indent beginning of paragraphs:
+\if@pemberleynofixindent\else
+\setlength\parindent{\@pemberleyparindent}
+\fi
+
+% never break inline math:
+\if@pemberleynofixmath\else
+\relpenalty=10000
+\binoppenalty=10000
+\fi
+
+
+% make amsbook place page numbers consistently (why do you need a hack for this? shouldn't this be the default?)
+\@ifclassloaded{amsbook}{
+\if@pemberleynobook\else
+\def\ps@plain{\ps@empty
+  \def\@evenhead{%
+      \normalfont\scriptsize
+    \rlap{\thepage}\hfil
+  }%
+  \def\@oddhead{%
+      \normalfont\scriptsize \hfil
+    \llap{\thepage}}%
+}
+\fi
+}{}
+
+
+
+
+% COMMANDS
+
+\if@pemberleynoparens\else
+\renewcommand\({\ensuremath{\left(}}
+\renewcommand\){\ensuremath{\right)}}
+\fi
+
+\if@pemberleynoalphenumi\else
+\renewcommand{\theenumi}{\alph{enumi}}
+\fi
+
+\newcommand\plaintodo[1]{
+    \if@pemberleynocolor
+    ****************** TODO ********************
+
+    #1
+
+    ********************************************
+  \else
+  {\color{red}
+    ****************** TODO ********************
+
+    #1
+
+    ********************************************
+  }
+  \fi
+}
+
+\NewDocumentCommand\coffeeware{}{
+    \ifthenelse{\equal{\theemail}{}}{
+        \def\@themail{}
+        }{
+            \def\@themail{(\theemail) }
+            }
+            \textbf{THE COFFEEWARE LICENSE}
+
+\theauthor{} \@themail{}wrote this file. As long as you retain this notice, you can do whatever you want with this stuff. If we meet in person someday, and you think this stuff is worth it, you are welcome to buy me a coffee in return.
+    }
+
+
+    \def\theauthor{}
+    \let\@origauthor\author
+    \renewcommand\author[1]{
+        \@origauthor{#1}
+            \def\theauthor{#1}
+        }
+
+    \def\thetitle{}
+    \let\@origtitle\title
+    \renewcommand\title[1]{
+        \@origtitle{#1}
+            \def\thetitle{#1}
+        }
+
+    \def\thedate{}
+    \let\@origdate\date
+    \renewcommand\date[1]{
+        \@origdate{#1}
+            \def\thedate{#1}
+        }
+
+        \def\theemail{}
+		% popular classes such as amsart also define an \email command, so we need to take care not to overwrite it:
+		\@ifundefined{email}{
+        \newcommand\email[1]{
+            \def\theemail{#1}
+            }
+			}{
+				\let\@origemail\email
+				\renewcommand\email[1]{
+						\@origemail{#1}
+						\def\theemail{#1}
+					}
+				}
+
+
+
+
+\endinput
+
+% ----------------------------------------------------------------------------
+% "THE COFFEEWARE LICENSE":
+% Adrian Rettich (adrian.rettich@gmail.com) wrote this file. As long as you 
+% retain this notice, you can do whatever you want with this stuff. If we 
+% should meet in person some day, and you think this stuff is worth it, you 
+% are welcome to buy me a coffee in return.  
+% ----------------------------------------------------------------------------
+

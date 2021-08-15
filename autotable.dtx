@@ -1,0 +1,103 @@
+\documentclass{ltxdoc}
+\usepackage{pemberley}
+\usepackage{autotable}
+\title{The Autotable Package}
+\author{Adrian Rettich}
+\email{adrian.rettich@gmail.com}
+\begin{document}
+
+
+\maketitle
+\section{Synopsis}
+This package provides a way to generate tabularx style tables with two important additions:
+
+\begin{itemize}
+    \item The ability to generate a fixed number of empty rows by passing said number as an argument.
+    \item The ability to automatically generate as many empty rows as the space on the page allows for.
+\end{itemize}
+
+  \section{Loaded Packages}
+  Autotable uses \textbf{tabularx}, \textbf{pgfopts}, \textbf{xparse}, \textbf{zref-savepos}, \textbf{xifthen}, and \textbf{pgfplots}.
+
+
+  \section{Creating Tables}
+
+  There are two ways to create an autotable: by using an environment similar to tabularx, or by setting up the desired output via a series of commands that are then executed summarily by calling the \textbackslash autotable macro.
+
+  \subsection{The autotable Environment}
+
+  This is not yet implemented. I am working on it.
+
+  \subsection{The autotable Command}
+
+  \begin{description}
+      \item[{\textbackslash autocolumn\{colspec\}[coltitle]}] Sets up a single column with column specification \emph{colspec}. The possible specifications are the same as for a tabularx environment. The optional \emph{coltitle} is the title of your column. Call this command once for each column you want your table to have.
+      \item[{\textbackslash autocolumns\{cols\}[titles]}] Takes a comma-separated list of column specifications and optionally a comma-separated list of titles. This is essentially a shortcut for multiple \textbackslash autocolumn commands. It is possible to mix both for the same table.
+      \item[\textbackslash countrows] Activate row counting: the leftmost column of your table will contain the row number.
+      \item[\textbackslash nocountrows] Deactivate row counting. This is the default.
+      \item[\textbackslash autotablereset] Reset everything you have set up so far.
+      \item[\textbackslash autotable\{n\}:] Create a table with columns according to what you have set up using the previous commands. The table has $n$ rows, plus one row for titles if you provided any titles. If you omit $n$, the table instead has (optionally a title row plus) as many rows as fit on the current page (possibly 0).
+  \end{description}
+
+  \newpage
+  \section{Examples}
+
+
+Die Tabellen auf dieser Seite wurden durch folgende Kommandos erzeugt (beachte, dass ich für die ersten beiden nicht explizit angeben musste, wie viele Zeilen ich möchte):
+
+\textbackslash autocolumn\{r\}
+
+\textbackslash autocolumns\{X,c,c\}[Name,ja,nein]
+
+
+\textbackslash countlines
+
+\textbackslash autotable\{\}
+
+\textbackslash autotablereset
+
+\textbackslash autocolumn\{X\}[Name]
+
+\textbackslash autocolumn\{X\}[E-Mail]
+
+
+\textbackslash autotable\{\}
+
+\textbackslash autotablereset
+
+\textbackslash autocolumns\{X,X,X\}
+
+\textbackslash autotable\{3\}
+
+\vspace{.5cm}
+\autocolumn{r}
+%\autocolumn{X}[Name]
+%\autocolumn{c}[ja]
+%\autocolumn{c}[nein]
+\autocolumns{X,c,c}[Name,ja,nein]
+\countlines
+\autotable{}
+\vspace{.5cm}
+\autotablereset
+\autocolumn{X}[Name]
+\autocolumn{X}[E-Mail]
+\autotable{}
+\vspace{.5cm}
+\autotablereset
+%\autocolumn{X}
+%\autocolumn{X}
+\autocolumns{X,X,X}
+\autotable{3}
+
+Auch wenn ich nach der Liste noch Text stehen habe, berechnet \textbackslash autotable\{\} die korrekte Anzahl an Zeilen.
+
+  \newpage
+  \section{Options}\label{secOptions}
+
+  Autotable accepts no options.
+
+
+\section{License}
+\coffeeware
+
+\end{document}

@@ -1,0 +1,132 @@
+\documentclass{ltxdoc}
+\usepackage{pemberley}
+\title{The Pemberley Package}
+\author{Adrian Rettich}
+\email{adrian.rettich@gmail.com}
+\begin{document}
+\maketitle
+
+\section{Synopsis}
+  This package provides some basic formatting fixes useful for most mathematical purposes. It also forms the base of the following much more extensive packages:
+
+  \begin{description}
+	  \item[pemberleymath] Lots and lots of math macros.
+	  \item[pemberleythm] A fixed version of \textbf{amsthm} that uses the same counter for all types of theorems. Works with \textbf{hyperref} and/or \textbf{autoref}.
+	  \item[pemberleythesis] Provides commands to easily typeset a TUK thesis, from title page to Eidesstattliche Erklärung.
+	  \item[pemberleytuk] Allows to write documents using the corporate design guidelines of the TUK (minus the font ptsans, because I still have not gotten it to work with pdflatex). Regarding this, also have a look at the \textbf{tukposter} document class.
+  \end{description}
+
+
+  \section{Loaded Packages}
+  Pemberley requires the \textbf{pgfopts}, \textbf{ifthen}, \textbf{iflang}, and \textbf{xparse} packages due to the way the internal logic is implemented.
+
+  Unless in an environment that natively supports unicode input (xetex or luatex), Pemberley also automatically loads \textbf{inputenc} with the \emph{utf8} option and \textbf{fontenc} with the \emph{T1} option.
+
+  Unless told not to via the \emph{nohyper} option, the \textbf{hyperref} package is loaded to place links in PDF files.
+
+  Finally, unless you pass the option \emph{nocolor}, the \textbf{xcolor} package with the \emph{dvipsnames} option will be loaded because it is {\color{ForestGreen}just} {\color{Blue}so} {\color{Dandelion}useful}.
+
+  \section{Formatting}
+
+  If you only want to use Pemberley's other features, but want all formatting to stay as it was before, load Pemberley with the \emph{nocosmetics} option. You can also enable only some of the features described here, cf.\ section \ref{secOptions}.
+
+  \subsection{Paragraph Indent}
+
+  Indenting the first line of a paragraph looks awful (to me), so Pemberley gets rid of that.
+  
+  You can get your indentation back by using the \emph{nofixindent} option, or set a custom indent by passing a length to the \emph{parindent} option.
+
+  \subsection{Inline Math}
+
+  Line breaks in inline math are terrible to read. \LaTeX{} does not always agree, so Pemberley fixes this by forbidding inline math breaks entirely. If this leads to overfull hboxes, you will have to reformulate your sentence or consider an equation environment.
+
+  You can disable this behavior by passing the \emph{nofixinline} option, but I really do not recommend it. Having a line break after the arrow in $f\colon A\to B$ looks, and always will look, unprofessional.
+
+  \subsection{Enumerations}
+
+  Pemberley changes the default enumerator to alphanumeric, i.e.\ a, b, c rather than i, ii, iii. 
+  
+  You can revert this by using the standard \LaTeX{} commands, or by passing the \emph{noalphenumi} option.
+
+  \subsection{amsbook}
+
+  In the \textbf{amsbook} class, page numbers are placed in the top corners, except for the first page of a chapter, where the number is banished to the bottom of the page. To me, that looks incredibly weird.
+  
+  If you load Pemberley in a document of the \textbf{amsbook} class, it fixes said class such the page numbers are placed consistently even on the first page of a chapter.
+
+  You can of course suppress this behavior (you monster!) by passing the \emph{nofixbook} option.
+
+  If your document class is not (a descendant of) \textbf{amsbook}, Pemberley of course leaves your page numbers alone.
+
+  \section{Metadata}
+
+  Unless you specified the \emph{nohyper} option, Pemberley automatically adds some metadata to the pdf, namely the author and title fields. This only works if you set \textbackslash author and/or \textbackslash title \emph{before} \textbackslash begin\{document\} and \emph{after} your \textbackslash usepackage commands (which is good practice anyway).
+
+  This does not work if you are also using the \textbf{pdfx} package, in which case you should refer to that package's documentation.
+
+  \section{Macros}
+
+  Pemberley provides the following additional macros.
+
+  \begin{description}
+	  \item[\textbackslash(, \textbackslash)] These are aliases for \textbackslash left( and \textbackslash right). Note that this means you can not use \textbackslash( and \textbackslash) to enter and exit inline math mode, but who does that anyway? (In case you do, you can revert to that behavior by loading Pemberley with the \emph{noparens} option.)
+	  \item[\textbackslash todo\{\emph{\textless todo\textgreater}\}] Puts a big red impossible-to-overlook TODO in your text.
+	  \item[\textbackslash theauthor, \textbackslash thetitle, \textbackslash thedate] Normally, it is impossible to retrieve the data set via the \textbackslash author, \textbackslash title, and \textbackslash date commands once \textbackslash maketitle has been used. Pemberley retains these values and makes them available through these three macros.
+	  \item[\textbackslash email, \textbackslash theemail] An addition to the \textbackslash author etc.\ values. Will not appear on any title page by default, but can be retrieved as \textbackslash theemail. Should your document class already define an \textbackslash email command (as e.g.\ amsart does), then Pemberley leaves it intact, but still makes the value accessible as \textbackslash theemail.
+	  \item[\textbackslash IfGermanTF\{\emph{then}\}\{\emph{else}\}] Check whether the current language (cf.\ section \ref{secLang}) is \emph{ngerman}, execute first argument if yes, second argument otherwise. A word of caution to \LaTeX{} hackers: this macro is not expandable. You may have a look at the package source code, where I have documented a workaround in case you need an expandable version.
+  \end{description}
+  \todo{put an example for the \textbackslash todo command here.\footnote{Now that I have done so, I guess I could remove that TODO, but then I would be stuck in a loop.}}
+
+  \section{Options}\label{secOptions}
+
+  The following options can be passed to \textbf{pemberley}:
+
+  \begin{description}
+	  \item[lang=\textit{\textless lang\textgreater }] Sets the language of the document to \textit{\textless lang\textgreater }, where the language names are the same as for the \textbf{babel} package. This option defaults to \emph{english}. Note: if you are using \textbf{babel}, this option is ignored and the current babel language used instead. See also the next section.
+
+	  \item[parindent=\textit{\textless len\textgreater }] Sets the parindent to \emph{\textless len\textgreater }.
+
+	  \item[nocolor] Skips loading \textbf{xcolor}.
+
+	  \item[nohyper] Skips loading \textbf{hyperref}.
+
+	  \item[paracol] Loads the \textbf{paracol} package, which allows switching from one to multiple columns and back in a single paragraph. Pemberley keeps footnotes per page rather than per column with this environment.
+
+	  \item[footnotereset] Numbers footnotes per page rather than per document.
+
+	  \item[nocosmetics] Disable everything described in the \textbf{Formatting} section and keep \textbackslash( and \textbackslash) as math mode delimiters. Basically, use this option if you like some of Pemberley's macros, but do not want the package to change anything in your document.
+
+		 \end{description}
+
+		 In case you like some, but not all of the cosmetic features, you can easily disable only some of them:
+
+		 \begin{description}
+			 \item[nofixindent] Keep default indentation at the beginning of paragraphs.
+			 \item[nofixinline] Allow line breaks inside equations.
+			 \item[noalphenumi] Keep the default enumerator.
+			 \item[noparens] Do not renew the \textbackslash( and \textbackslash) commands.
+			 \item[nofixbook] If you are using the \textbf{amsbook} class, use this to disable the page number fix described earlier.
+		 \end{description}
+
+		 Of course, none of the above are useful if you passed \emph{nocosmetics}.
+
+		 In case you only like some of these features, you can also \emph{en}able those by passing \emph{fixindent}, \emph{fixinline}, \emph{alphenumi}, \emph{parens}, and/or \emph{fixbook}. As soon as you specify any of these, all cosmetic features you did \emph{not} explicitly enable are disabled.
+
+		 \subsection{Extensions}
+
+		 If you use any of the Pemberley descendants (PemberleyMath and friends) or one of my classes (tukposter), then those will automatically load Pemberley. You can pass any Pemberley options to one of those packages or classes, and they will automatically be handed down to Pemberley to process.
+
+		 \section{Languages}\label{secLang}
+		 Pemberley currently supports the languages \emph{english} and \emph{ngerman}. You can either set one of these via the \emph{lang} option, or you can make use of \textbf{babel}'s \emph{selectlanguage} feature. 
+
+		 Any language other than \emph{english} and \emph{ngerman} will make Pemberley default to English (which only affects some strings such as the auto-translation of department names in \textbf{pemberleytuk}; everything else will of course continue working).
+
+\section{License}
+\coffeeware
+
+\vspace{\baselineskip}
+
+You can use this license text in your own document by invoking the \textbackslash coffeeware command. It will use the name set via \textbackslash author and the email address from \textbackslash email.
+
+
+\end{document}

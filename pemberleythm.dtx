@@ -1,0 +1,104 @@
+\documentclass{ltxdoc}
+\usepackage{pemberleythm}
+
+\title{The PemberleyThm Package}
+\author{Adrian Rettich}
+\email{adrian.rettich@gmail.com}
+
+\begin{document}
+\maketitle
+\section{Synopsis}
+  The PemberleyThm package is designed to fix some annoying (to me) problems with \textbf{amsmath}. Most importantly, it allows for easy consecutive numbering of theorems, lemmas, etc.\ even in conjunction with \textbf{autoref}. It also defines useful presets.
+
+  \section{Loaded Packages}
+  PemberleyThm loads \textbf{pemberley}, \textbf{amsthm}, \textbf{hyperref}, and \textbf{aliascnt}.
+
+  \begin{theorem}\label{t}
+	  This is a theorem.
+  \end{theorem}
+
+  \begin{lemma}\label{l}
+	  This is a lemma.
+  \end{lemma}
+
+  I am referencing \autoref{t}.
+
+  \section{Numbering}
+
+  While \textbf{amsthm} numbers theorems, definitions, and so on separately, I like my numbers to be strictly increasing to make looking up stuff easier. This is usually hard to combine with hyper- and autoref, which Pemberley fixes for you.
+
+  You can make any of the predefined styles unnumbered by passing its name with a star as an option to \textbf{pemberleythm} (cf.\ section \ref{secOptions}).
+
+  The default upper level counter for theorem environments is the chapter number if your document class defines chapters, the section otherwise. You can override this via the \emph{counter} option (section \ref{secOptions}).
+
+  \section{Uppercase vs Lowercase}
+
+  \textbf{hyperref} likes to capitalize names when using \textbackslash autoref. I find this terrible to read, hence Pemberley converts theorem names to lowercase in references. You can switch back to the default behavior by passing the option \emph{uppercase}.
+
+  If the current language is \emph{ngerman} (set via \textbf{babel} or \textbf{pemberley}), then this behavior is disabled because in German, nouns are always capitalized.
+
+
+  \section{Environments}
+
+ By default, PemberleyThm defines multiple theorem environments for you, namely \textbf{theorem}, \textbf{lemma}, \textbf{definition}, \textbf{corollary}, \textbf{remark}, \textbf{notation}, \textbf{example}, and \textbf{exercise}. By default, these are all included in the numbering scheme, but you can disable numbering for any number of these by using the options listed in section \ref{secOptions}.
+
+ You can also create any number of additional theorem styles by using the \textbackslash newpemberleythm command..
+
+  \section{Macros}
+
+  You can create a new theorem environment by using the command
+
+  \begin{center}\textbackslash newpemberleythm\{name\}\{displayname\}\{style\}.\end{center}
+
+  The styles are those of \textbf{amsthm}.
+
+  For example, the command sequence
+
+  \begin{center}
+		\textbackslash newpemberleythm\{magic\}\{Black Magic\}\{plain\}
+
+		\textbackslash begin\{magic\}
+
+			This really works.
+
+		\textbackslash end\{magic\}
+  \end{center}
+
+	  results in the following:
+		\newpemberleythm{magic}{Black Magic}{plain}
+		\begin{magic}
+			This really works.
+		\end{magic}
+
+		The starred version \textbackslash newpemberleythm* creates an unnumbered theorem environment.
+
+  \section{Options}\label{secOptions}
+
+  PemberleyThm accepts the same options as the base Pemberley package (with the same effects), as well as the following:
+
+  \begin{description}
+	  \item[uppercase] Always capitalize references.
+	  \item[counter=\emph{counter}] Pass the name of the counter you would like to use as the first level, for example \emph{counter=section} to number by sections rather than chapters.
+	  \item[theorem*,lemma*,corollary*,definition*,remark*,notation*,example*,exercise*] Do not number the specified environment.
+	  \item[theorem=\emph{name},lemma=\emph{name},corollary=\emph{name},definition=\emph{name},]\item[remark=\emph{name},notation=\emph{name},example=\emph{name},exercise=\emph{name}]\vspace{-2ex} Use this option to change the displayed name for the specified environment.  Note that if the display name contains spaces, it must be enclosed in braces.
+	  \item[theoremstyle=\emph{style},lemmastyle=\emph{style},corollarystyle=\emph{style},definitionstyle=\emph{style},]\item[remarkstyle=\emph{style},notationstyle=\emph{style},examplestyle=\emph{style},exercisestyle=\emph{style}]\vspace{-4ex} Use this option to change the display style (cf.\ \textbf{amsthm}) for the specified environment.
+  \end{description}
+
+
+
+
+
+
+
+
+  
+
+
+\section{License}
+\coffeeware
+
+\section{Thanks}
+Many thanks to Markus Kurtz, who considerably cleaned up my messy theorem code and made it extensible!
+
+
+\end{document}
